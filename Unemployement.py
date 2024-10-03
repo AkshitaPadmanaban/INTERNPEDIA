@@ -1,17 +1,36 @@
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import classification_report, accuracy_score
+import pandas as pd
 
-# Split the data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Load the dataset
+df = pd.read_csv('Unemployment.csv')
 
-# Train a Random Forest Classifier
-model = RandomForestClassifier()
-model.fit(X_train, y_train)
+# Check the columns and the first few rows
+print("Column Names:")
+print(df.columns)
+print("\nFirst Few Rows:")
+print(df.head())
 
-# Make predictions
-predictions = model.predict(X_test)
+# If 'Date' is not found, check for leading/trailing spaces
+df.columns = df.columns.str.strip()  # Remove any leading/trailing spaces
 
-# Evaluate the model
-print(classification_report(y_test, predictions))
-print("Accuracy:", accuracy_score(y_test, predictions))
+# Try accessing the 'Date' column again
+if 'Date' in df.columns:
+    df['Date'] = pd.to_datetime(df['Date'])
+else:
+    print("Column 'Date' not found. Available columns are:")
+    print(df.columns)
+
+# If 'Date' is available, proceed with your analysis
+if 'Date' in df.columns:
+    df.set_index('Date', inplace=True)
+
+    # Plotting and further analysis here...
+    plt.figure(figsize=(14, 7))
+    plt.plot(df['Estimated Unemployment Rate (%)'], marker='o', linestyle='-')
+    plt.title('Unemployment Rate Over Time')
+    plt.xlabel('Date')
+    plt.ylabel('Unemployment Rate')
+    plt.grid()
+    plt.show()
+else:
+    print("Please check your dataset for the correct date column.")
+
